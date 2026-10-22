@@ -2,31 +2,34 @@
   This Library is written for DS1302 RTC
   Author: Bonezegei (Jofel Batutay)
   Date: Feb 2024
+  Updated: October 22, 2026
 */
 
 #ifndef _BONEZEGEI_DS1302_H_
 #define _BONEZEGEI_DS1302_H_
+
 #include <Arduino.h>
 
 class Bonezegei_DS1302 {
 public:
   Bonezegei_DS1302();
-  Bonezegei_DS1302(uint8_t addr);
+  Bonezegei_DS1302(uint8_t cePin, uint8_t clkPin, uint8_t ioPin);
 
   char begin();
+  char begin(uint8_t cePin, uint8_t clkPin, uint8_t ioPin);
   uint8_t convert(uint8_t data);
   uint8_t convertBCD(int data);
   char getTime();
 
-  uint8_t getSeconds();  //return seconds
-  uint8_t getMinute();   //return Minute
-  uint8_t getHour();     //return Hour
-  uint8_t getDay();      //return Day of Week
-  uint8_t getDate();     //return Date
-  uint8_t getMonth();    //return Month
-  uint8_t getYear();     //return Year
-  uint8_t getAMPM();     //return 0=AM  1=PM
-  uint8_t getFormat();   //return 12 or 24 hour format
+  uint8_t getSeconds();  // return seconds
+  uint8_t getMinute();   // return Minute
+  uint8_t getHour();     // return Hour
+  uint8_t getDay();      // return Day of Week
+  uint8_t getDate();     // return Date
+  uint8_t getMonth();    // return Month
+  uint8_t getYear();     // return Year
+  uint8_t getAMPM();     // return 0=AM 1=PM
+  uint8_t getFormat();   // return 12 or 24 hour format
 
   void setFormat(uint8_t fmt);  // set time format 12 or 24
   void setAMPM(uint8_t ampm);   // set AM or PM   PM=1 AM=0
@@ -35,19 +38,26 @@ public:
   void setDay(uint8_t d);       // set Day of week
 
 private:
-  uint8_t _addr;
+  void writeByte(uint8_t value);
+  uint8_t readByte();
+  void writeRegister(uint8_t reg, uint8_t value);
+  uint8_t readRegister(uint8_t reg);
+
+  uint8_t _cePin;
+  uint8_t _clkPin;
+  uint8_t _ioPin;
   uint8_t _data[9];
 
-  uint8_t _minutes;  // 0 - 60 seconds
-  uint8_t _seconds;  // 0 - 60 minutes
-  uint8_t _hour;     // 1-12 or 0 -23
-  uint8_t _ampm;     // 0=AM  1=PM
-  uint8_t _hour12;   // 12 or 24  hour format
+  uint8_t _minutes;  // 0 - 59 minutes
+  uint8_t _seconds;  // 0 - 59 seconds
+  uint8_t _hour;     // 1-12 or 0-23
+  uint8_t _ampm;     // 0=AM 1=PM
+  uint8_t _hour12;   // 12 or 24 hour format
 
-  uint8_t _day;    // 1-7  day of week
+  uint8_t _day;    // 1-7 day of week
   uint8_t _date;   // 1-31 date
-  uint8_t _month;  // 1- 12 month
-  uint8_t _year;   // 0- 99 year
+  uint8_t _month;  // 1-12 month
+  uint8_t _year;   // 0-99 year
 };
 
 #endif
